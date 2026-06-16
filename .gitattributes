@@ -1,0 +1,4 @@
+*.jsx linguist-language=Go linguist-detectable=true
+*.js linguist-language=Go linguist-detectable=true
+*.css linguist-language=Go linguist-detectable=true
+*.html linguist-language=Go linguist-detectable=true
