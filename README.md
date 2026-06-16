@@ -7,6 +7,8 @@ automática** de responsável com um clique.
 Este é o frontend que consome a **API em Go**:
 👉 https://github.com/Dudainfinity/chamados-go
 
+![Tela de chamados internos](docs/screenshot.png)
+
 > Implementação do desafio técnico em arquitetura desacoplada (frontend e backend
 > como projetos independentes que se comunicam via HTTP/JSON). Existe também uma
 > versão monolítica em Ruby on Rails:
