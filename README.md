@@ -1,16 +1,81 @@
-# React + Vite
+# Chamados Internos — Frontend (React + Vite)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Interface web para o sistema de controle de chamados internos. Mostra os chamados
+em uma tabela, exibe prioridade/status/responsável e permite **atribuição
+automática** de responsável com um clique.
 
-Currently, two official plugins are available:
+Este é o frontend que consome a **API em Go**:
+👉 https://github.com/Dudainfinity/chamados-go
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+> Implementação do desafio técnico em arquitetura desacoplada (frontend e backend
+> como projetos independentes que se comunicam via HTTP/JSON). Existe também uma
+> versão monolítica em Ruby on Rails:
+> https://github.com/Dudainfinity/desafio-codificar-chamados
 
-## React Compiler
+## Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **React 19**
+- **Vite** — bundler e dev server com HMR
+- **Fetch API** — comunicação com o backend (sem dependências extras)
+- **ESLint** — padronização de código
 
-## Expanding the ESLint configuration
+## Como rodar
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+O frontend sozinho não exibe dados — ele precisa da **API Go no ar**. A ordem é:
+banco → API → frontend.
+
+### 1. Banco de dados e API (no projeto `chamados-go`)
+
+```bash
+cd ../chamados-go
+docker compose up -d     # sobe o PostgreSQL (porta 5436)
+go run ./cmd/api         # sobe a API em http://localhost:8090
+```
+
+### 2. Frontend (este projeto)
+
+```bash
+npm install
+npm run dev              # sobe em http://localhost:5173
+```
+
+Abra o endereço mostrado no terminal (ex.: `http://localhost:5173`). A tabela de
+chamados deve aparecer com os dados vindos da API.
+
+## Configuração
+
+O endereço da API fica em `src/App.jsx`:
+
+```js
+const API = "http://localhost:8090";
+```
+
+O backend já libera **CORS** para qualquer origem `http://localhost:*`, então o
+Vite funciona mesmo que suba em outra porta (5174, 5175, …).
+
+## Funcionalidades
+
+- Listagem de chamados em tabela (título, prioridade, status, responsável)
+- Botão **Atribuir auto** — chama `POST /tickets/:id/assign-auto` e recarrega a lista
+- Botão **Recarregar** para atualizar os dados manualmente
+- Tratamento de erro de rede: se a API estiver fora do ar, a tela mostra uma
+  mensagem clara em vez de travar em "Carregando..."
+- Estados de carregando e de lista vazia
+
+## Scripts
+
+| Comando | Descrição |
+|---|---|
+| `npm run dev` | Servidor de desenvolvimento com HMR |
+| `npm run build` | Build de produção (gera `dist/`) |
+| `npm run preview` | Pré-visualiza o build de produção |
+| `npm run lint` | Verifica o código com ESLint |
+
+## Estrutura
+
+```
+src/
+  main.jsx      # ponto de entrada do React
+  App.jsx       # componente principal (tabela + chamadas à API)
+  index.css     # estilos globais
+```
